@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographie : Votre Plan pour le Code de la Route</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .flowchart-step {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .flowchart-arrow::after {
+            content: '→';
+            font-size: 2rem;
+            line-height: 2.5rem;
+            color: #FFD166;
+            margin: 0 1rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.75rem;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 9999px;
+            background-color: #06D6A0;
+            border: 4px solid #f0f4f8;
+        }
+        .tab-button {
+            @apply px-6 py-3 rounded-lg font-bold transition-colors;
+        }
+        .tab-button.active {
+            @apply bg-[#118AB2] text-white;
+        }
+        .tab-button:not(.active) {
+            @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-[#073B4C]">
+
+    <!-- 
+    Plan narratif de l'infographie :
+    1.  Titre et Accroche : Un titre percutant et un chiffre clé pour motiver.
+    2.  Vue d'Ensemble : Un graphique Donut pour visualiser la répartition du temps entre les grandes phases du plan.
+    3.  Phase 1 - Assimilation : Un diagramme à barres pour montrer la répartition des jours d'étude par thème.
+    4.  Phase 2 - Entraînement : Un diagramme de flux pour illustrer la boucle d'amélioration continue.
+    5.  Thèmes Clés : Un graphique Radar pour donner une vue d'ensemble de tous les thèmes officiels à maîtriser.
+    6.  Dernière Ligne Droite : Une frise chronologique simple pour les derniers jours cruciaux.
+    7.  Conclusion : Un message d'encouragement final.
+    8.  Planning détaillé : Un calendrier jour par jour avec des cases à cocher pour suivre la progression, stockées localement, incluant repas et sommeil.
+    
+    Choix des visualisations :
+    - Chiffre Clé : Objectif 'Informer'. Méthode : Grand texte. Justification : Impact immédiat.
+    - Répartition des Phases : Objectif 'Compare'. Méthode : Donut Chart (Chart.js). Justification : Montre la proportion de chaque partie dans le tout.
+    - Allocation Thèmes Phase 1 : Objectif 'Compare'. Méthode : Bar Chart (Chart.js). Justification : Compare facilement des valeurs discrètes (jours).
+    - Boucle d'Entraînement : Objectif 'Organiser'. Méthode : Flow Chart (HTML/CSS). Justification : Idéal pour montrer un processus. Pas de SVG/Mermaid.
+    - Thèmes du Code : Objectif 'Compare'. Méthode : Radar Chart (Chart.js). Justification : Compare plusieurs catégories sur un même axe (importance).
+    - Frise Chronologique : Objectif 'Change'. Méthode : Timeline (HTML/CSS). Justification : Montre une séquence d'événements. Pas de SVG/Mermaid.
+    - Planning Quotidien : Objectif 'Organiser'. Méthode : Liste avec checkboxes (HTML/CSS/JS localStorage). Justification : Suivi interactif des tâches, repas et sommeil.
+    - Quiz : Objectif 'Évaluer'. Méthode : Questions à choix multiples (HTML/CSS/JS). Justification : Évaluation des connaissances, feedback immédiat.
+
+    Confirmation : NI Mermaid JS NI SVG n'ont été utilisés dans ce document.
+    Palette de couleurs utilisée : Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C).
+    -->
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-6xl font-black text-[#073B4C] mb-2">Votre Plan de Bataille pour le Code</h1>
+            <p class="text-lg md:text-xl text-[#118AB2]">Le succès en 3 étapes clés. Prête à relever le défi ?</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex justify-center space-x-4 mb-8">
+            <button id="infographicTab" class="tab-button active">Infographie & Planning</button>
+            <button id="quizTab" class="tab-button">Quiz du Code</button>
+        </nav>
+
+        <!-- Infographic Content -->
+        <div id="infographicContent" class="content-section active">
+            <main class="space-y-12">
+
+                <!-- Section 1: Vue d'Ensemble -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-6">Vue d'Ensemble de Votre Mission</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="text-center">
+                            <p class="text-2xl mb-2">Objectif :</p>
+                            <p class="text-8xl font-black text-[#FF6B6B]">52</p>
+                            <p class="text-4xl font-bold">Jours</p>
+                            <p class="mt-4 text-lg text-gray-600">Un programme structuré pour une montée en compétence rapide et efficace jusqu'au 2 octobre 2025.</p>
+                        </div>
+                        <div>
+                            <p class="text-center font-bold mb-4">Répartition du temps par phase</p>
+                            <div class="chart-container h-[300px] md:h-[350px]">
+                                <canvas id="phasesChart"></canvas>
+                            </div>
+                            <p class="text-center text-sm text-gray-500 mt-4">Chaque phase est conçue pour construire progressivement vos connaissances et votre confiance.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Phase 1 - Assimilation -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-2">Phase 1 : L'Assimilation (Semaines 1 & 2)</h2>
+                    <p class="text-center text-gray-600 mb-8">On construit les fondations ! L'objectif est de découvrir et comprendre chaque grand thème du code.</p>
+                    <div class="chart-container">
+                        <canvas id="assimilationChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-4">Ce graphique montre le nombre de jours dédiés à chaque sujet pour garantir une couverture complète.</p>
+                </section>
+
+                <!-- Section 3: Phase 2 - Entraînement -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-2">Phase 2 : L'Entraînement (Semaines 3 & 4)</h2>
+                    <p class="text-center text-gray-600 mb-8">La pratique mène à la perfection. C'est le moment de vous tester et de corriger vos points faibles avec cette boucle d'amélioration.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0">
+                        <div class="flowchart-step bg-[#118AB2] text-white p-4 rounded-lg shadow-md w-48">
+                            <span class="font-bold">1. Faire une série</span>
+                        </div>
+                        <div class="flowchart-arrow hidden md:block"></div>
+                        <div class="flowchart-step bg-[#118AB2] text-white p-4 rounded-lg shadow-md w-48">
+                            <span class="font-bold">2. Analyser les erreurs</span>
+                        </div>
+                        <div class="flowchart-arrow hidden md:block"></div>
+                        <div class="flowchart-step bg-[#118AB2] text-white p-4 rounded-lg shadow-md w-48">
+                            <span class="font-bold">3. Relire le cours</span>
+                        </div>
+                        <div class="flowchart-arrow hidden md:block"></div>
+                        <div class="flowchart-step bg-[#FF6B6B] text-white p-4 rounded-lg shadow-md w-48">
+                            <span class="font-bold">4. Recommencer</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-8">Répétez ce cycle quotidiennement avec au moins 2 séries complètes pour ancrer les réflexes.</p>
+                </section>
+                
+                <!-- Section 4: Thèmes Clés -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-2">Les 10 Thèmes Officiels du Code</h2>
+                    <p class="text-center text-gray-600 mb-8">Votre examen portera sur ces 10 thèmes. Le programme vous prépare à tous les maîtriser.</p>
+                    <div class="chart-container">
+                        <canvas id="themesChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-4">Ce graphique montre l'importance relative de chaque thème dans votre préparation.</p>
+                </section>
+
+                <!-- Section 5: Dernière Ligne Droite -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-2">La Dernière Ligne Droite (Fin Sept. 2025)</h2>
+                    <p class="text-center text-gray-600 mb-8">On réduit l'intensité pour arriver en pleine forme le jour J.</p>
+                    <div class="relative pl-12 border-l-4 border-[#06D6A0]">
+                        <div class="timeline-item mb-8">
+                            <h3 class="font-bold text-xl text-[#073B4C]">Jours avant l'examen</h3>
+                            <p class="text-gray-600">Dernières séries de révision le matin, sans forcer. Relecture ciblée du carnet d'erreurs l'après-midi.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <h3 class="font-bold text-xl text-[#073B4C]">Veille de l'examen</h3>
+                            <p class="text-gray-600">Aucune révision. Repos, détente, alimentation saine et une bonne nuit de sommeil. La confiance est votre meilleur atout !</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 6: Planning détaillé jour par jour -->
+                <section class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-bold text-center mb-2">Votre Planning Quotidien (Cochez pour suivre !)</h2>
+                    <p class="text-center text-gray-600 mb-8">Chaque jour, suivez les étapes et marquez votre progression. Vos données sont sauvegardées localement. N'oubliez pas de consulter un professionnel de santé pour un régime alimentaire personnalisé.</p>
+                    <button id="toggleAllAccordions" class="mb-4 px-4 py-2 bg-[#118AB2] text-white rounded-md hover:bg-[#0e6a8d] transition-colors">Tout déplier / Tout replier</button>
+                    <div id="daily-planning" class="space-y-4">
+                        <!-- Daily entries will be generated here by JavaScript -->
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- Quiz Content -->
+        <div id="quizContent" class="content-section">
+            <section class="bg-white rounded-lg shadow-lg p-6 md:p-8 mt-8">
+                <h2 class="text-3xl font-bold text-center mb-6">Quiz du Code de la Route</h2>
+                <div id="quiz-area" class="space-y-6">
+                    <div id="question-container" class="text-lg font-semibold mb-4 text-[#073B4C]"></div>
+                    <div id="options-container" class="space-y-2"></div>
+                    <div class="flex justify-between items-center mt-4">
+                        <button id="submit-answer" class="px-6 py-3 bg-[#06D6A0] text-white rounded-md hover:bg-[#05b38a] transition-colors">Valider</button>
+                        <div id="feedback" class="font-bold text-lg"></div>
+                        <button id="next-question" class="hidden px-6 py-3 bg-[#118AB2] text-white rounded-md hover:bg-[#0e6a8d] transition-colors">Question Suivante</button>
+                    </div>
+                    <div id="quiz-results" class="hidden mt-6 text-xl font-bold text-center text-[#073B4C]"></div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="text-center mt-12 py-8 border-t border-gray-300">
+            <p class="text-2xl font-bold text-[#118AB2]">Vous avez toutes les cartes en main.</p>
+            <p class="text-gray-600 mb-4">Bon courage, et bonne route !</p>
+            <p class="text-xs text-gray-400">Mathilde Martine PAISLEY énervant</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const FONT_COLOR = '#073B4C';
+        const GRID_COLOR = 'rgba(7, 59, 76, 0.1)';
+        const PALETTE = {
+            red: '#FF6B6B',
+            yellow: '#FFD166',
+            green: '#06D6A0',
+            blue: '#118AB2',
+            navy: '#073B4C'
+        };
+
+        function wrapLabel(label, maxWidth) {
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + words[i].length + 1 < maxWidth) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            return Array.isArray(label) ? label.join(' ') : label;
+        };
+        
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: FONT_COLOR,
+                        font: {
+                            family: "'Inter', sans-serif"
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: { color: GRID_COLOR },
+                    grid: { color: GRID_COLOR },
+                    pointLabels: { 
+                        color: FONT_COLOR,
+                        font: { size: 12, family: "'Inter', sans-serif" }
+                    },
+                    ticks: {
+                        color: FONT_COLOR,
+                        backdropColor: 'rgba(255, 255, 255, 0.75)'
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: FONT_COLOR, font: { family: "'Inter', sans-serif" } }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: FONT_COLOR, font: { family: "'Inter', sans-serif" } }
+                }
+            }
+        };
+
+        // Chart 1: Phases
+        const phasesCtx = document.getElementById('phasesChart').getContext('2d');
+        new Chart(phasesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Phase 1: Assimilation', 'Phase 2: Entraînement', 'Dernière Ligne Droite'],
+                datasets: [{
+                    label: 'Jours par Phase',
+                    data: [14, 14, 3],
+                    backgroundColor: [PALETTE.blue, PALETTE.green, PALETTE.yellow],
+                    borderColor: '#f0f4f8',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: FONT_COLOR,
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Assimilation
+        const assimilationCtx = document.getElementById('assimilationChart').getContext('2d');
+        new Chart(assimilationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Panneaux', 'Circulation', 'Conducteur & Usagers', ['Environnement &', 'Premiers Secours'], ['Documents &', 'Équipement'], 'Manœuvres & Mécanique'],
+                datasets: [{
+                    label: 'Jours alloués',
+                    data: [3, 2, 2, 3, 2, 2],
+                    backgroundColor: [PALETTE.blue, PALETTE.green, PALETTE.yellow, PALETTE.blue, PALETTE.green, PALETTE.yellow],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                plugins: {
+                    ...defaultChartOptions.plugins,
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Chart 3: Thèmes
+        const themesCtx = document.getElementById('themesChart').getContext('2d');
+        new Chart(themesCtx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    ['L - Circulation', 'Routière'], 
+                    'C - Le Conducteur', 
+                    'R - La Route', 
+                    ['U - Autres', 'Usagers'], 
+                    ['A - Notions', 'Générales'], 
+                    ['M - Mécanique &', 'Équipements'], 
+                    ['S - Sécurité', 'Passagers'], 
+                    'E - Environnement', 
+                    ['P - Premiers', 'Secours']
+                ],
+                datasets: [{
+                    label: 'Focus de la préparation',
+                    data: [9, 8, 7, 8, 6, 5, 5, 6, 7],
+                    backgroundColor: 'rgba(6, 214, 160, 0.2)',
+                    borderColor: PALETTE.green,
+                    pointBackgroundColor: PALETTE.green,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: PALETTE.green
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                plugins: {
+                    ...defaultChartOptions.plugins,
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Daily Planning Logic
+        const dailyPlanningData = [
+            { date: '12-08-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 7h30 (Heure indicative, adaptez à votre rythme)',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Introduction au Code de la Route (structure, examen), lecture "Les enjeux du permis" et "Le véhicule et son équipement de base" (manuel, chap. 1-2).',
+                '💡 Quiz : 5 questions sur l\'équipement de sécurité.',
+                '📚 Étude (14h00-16h00) : Panneaux de danger (triangles rouges) : Signification, portée, exemples (virages dangereux, passage à niveau, enfants, animaux). Lecture "La signalisation - Panneaux de danger" (manuel, chap. 3, p. 1-10).',
+                '💡 Quiz visuel : Identifier 10 panneaux de danger courants.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '😴 Dodo : 22h30 (Objectif 7-8h de sommeil)'
+            ]},
+            { date: '13-08-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 7h30',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Panneaux d\'interdiction (ronds barrés, sens interdits, limitations de vitesse) et d\'obligation (ronds bleus, flèches). Lecture "La signalisation - Panneaux d\'interdiction/obligation" (manuel, chap. 3, p. 11-20).',
+                '💡 Quiz : 10 questions ciblées sur interdiction/obligation.',
+                '📚 Étude (14h00-16h00) : Panneaux d\'indication (directions, services, localisation) et signalisation temporaire (travaux, déviation). Lecture "La signalisation - Panneaux d\'indication & temporaire" (manuel, chap. 3, p. 21-30).',
+                '💡 Série : 15 questions mélangées sur tous les types de panneaux.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '14-08-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 7h30',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Priorité à droite (règles, exceptions, situations). Lecture "Les règles de priorité" (manuel, chap. 4, p. 1-10).',
+                '💡 Quiz : 10 questions sur la priorité à droite.',
+                '📚 Étude (14h00-16h00) : Gestion des feux tricolores (vert, orange, rouge) et panneaux STOP / CÉDEZ-LE-PASSAGE (différences, conduite à tenir). Lecture "Feux et Stop/Cédez-le-passage" (manuel, chap. 4, p. 11-20).',
+                '💡 Série complète de 20 questions sur la signalisation.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '15-08-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 7h30',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Ronds-points et giratoires : insertion, circulation, sortie. Le dépassement : conditions, distances de sécurité (latérale, longitudinale), interdictions. Lecture "Ronds-points et Dépassements" (manuel, chap. 4, p. 21-30).',
+                '💡 Quiz : 10 questions sur le dépassement et giratoires.',
+                '📚 Étude (14h00-16h00) : Croisements : règles en agglomération et hors agglomération. Stationnement et arrêt : zones autorisées/interdites, règles en ville (manuel, chap. 4, p. 31-40).',
+                '💡 Pratique : Exercices sur les zones de stationnement.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '16-08-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 7h30',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Le conducteur et ses facultés : impact de l\'alcool (taux, sanctions), des drogues et des médicaments. Lecture "Le conducteur" (manuel, chap. 5, p. 1-15).',
+                '💡 Quiz : 10 questions sur alcool/drogues/médicaments.',
+                '📚 Étude (14h00-16h00) : Gestion de la fatigue (somnolence, micro-sommeil) et du stress au volant. Utilisation du téléphone et autres distractions (dangers, amendes). Lecture "Fatigue et Distractions" (manuel, chap. 5, p. 16-30).',
+                '💡 Pratique : Identifier des situations dangereuses liées aux distractions.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '17-08-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 7h30',
+                '💧 Hydratation : Grand verre d\'eau',
+                '📚 Étude (9h00-11h00) : Les piétons (règles de priorité, passages protégés), cyclistes (pistes cyclables, règles de dépassement en sécurité). Lecture "Les usagers faibles" (manuel, chap. 6, p. 1-15).',
+                '💡 Quiz : 10 questions sur piétons/cyclistes.',
+                '📚 Étude (14h00-16h00) : Les deux-roues motorisés (positionnement, angle mort). Les poids lourds et véhicules lents (précautions spécifiques, aspiration). Lecture "Deux-roues et Poids Lourds" (manuel, chap. 6, p. 16-30).',
+                '💡 Synthèse : Faire un résumé des points clés sur l\'empathie envers les usagers.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '18-08-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Étude (9h00-11h00) : L\'éco-conduite (techniques de conduite souple, réduction conso). Impact environnemental du véhicule (normes anti-pollution, entretien). Lecture "Environnement et Conduite" (manuel, chap. 7, p. 1-15).',
+                '💡 Quiz : 5 questions sur l\'éco-conduite.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Conduite par temps de pluie, neige, brouillard (règles, équipement obligatoire). Conduite de nuit (visibilité, phares, sécurité). Lecture "Conditions Météo et Nuit" (manuel, chap. 7, p. 16-30).',
+                '💡 Synthèse : Lister les précautions spécifiques pour chaque condition.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits (brocolis, haricots verts), 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '19-08-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Étude (9h00-11h00) : Premiers secours : Protéger (P) et Alerter (A). Que faire en cas d\'accident (balisage, sécurité des lieux, numéros d\'urgence). Lecture "Premiers Secours P/A" (manuel, chap. 8, p. 1-15).',
+                '💡 Quiz : 10 questions sur les réflexes en cas d\'accident.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Premiers secours : Secourir (S). Les gestes qui sauvent (PLS, compression, réanimation). La sécurité des passagers (ceinture, enfants). Lecture "Premiers Secours S et Passagers" (manuel, chap. 8, p. 16-30).',
+                '💡 Pratique mentale : Visualiser les étapes d\'intervention.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '💪 Sport (18h30-19h30) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '20-08-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Étude (9h00-11h00) : Le permis de conduire (catégories, validité, permis à points, récupération de points). La carte grise (certificat d\'immatriculation). Lecture "Permis et Carte Grise" (manuel, chap. 9, p. 1-15).',
+                '💡 Quiz : 10 questions sur les documents du conducteur.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : L\'assurance auto (obligations, types de contrats, responsabilité). Le contrôle technique (fréquence, points de contrôle, validité). Lecture "Assurance et Contrôle Tech." (manuel, chap. 9, p. 16-30).',
+                '💡 Synthèse : Faire une fiche des documents à toujours avoir sur soi.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '21-08-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Étude (9h00-11h00) : Équipements obligatoires du véhicule (gilet jaune, triangle). Les pneumatiques (structure, pression, usure, rôle de l\'adhérence). Lecture "Équipements et Pneus" (manuel, chap. 10, p. 1-15).',
+                '💡 Quiz : 10 questions sur les pneus et équipements.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Le système de freinage (ABS, ESP, distances de freinage, entretien). L\'éclairage du véhicule (feux de croisement, route, position, brouillard). Lecture "Freinage et Éclairage" (manuel, chap. 10, p. 16-30).',
+                '💡 Pratique : Vérifier l\'emplacement des feux sur une voiture.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '22-08-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Étude (9h00-11h00) : Vérifications sous le capot (niveaux : huile, liquide de refroidissement, lave-glace). Le tableau de bord (comprendre les voyants lumineux). Lecture "Vérifs Capot et Tableau de Bord" (manuel, chap. 11, p. 1-15).',
+                '💡 Quiz : 10 questions sur la mécanique de base.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Manœuvres de stationnement (créneau, bataille avant/arrière, épi). Le demi-tour (3 temps, 2 temps, en U). La marche arrière (règles de sécurité, visibilité). Lecture "Manœuvres et Mécanique Avancée" (manuel, chap. 11, p. 16-30).',
+                '💡 Pratique mentale : Visualiser les étapes d\'un créneau.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '23-08-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Correction DÉTAILLÉE des erreurs. Comprendre le POURQUOI de chaque faute. Noter dans votre carnet d\'erreurs.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relecture des fiches de cours correspondant aux erreurs fréquentes de la matinée. Refaire les questions mal comprises.',
+                '💡 Focus : Concentrez-vous sur vos 3 thèmes les plus faibles identifiés.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '24-08-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Correction minutieuse, noter les questions pièges.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Refaire les questions mal comprises, revoir les règles de circulation (priorités, giratoires).',
+                '💡 Focus : Revoir les panneaux les plus ambigus ou complexes.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '25-08-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Correction rigoureuse. Chronométrez-vous pour vous habituer au rythme de l\'examen.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Revoir les définitions clés et les chiffres importants (distances de sécurité, vitesses, taux d\'alcoolémie).',
+                '💡 Focus : Les situations de croisement et de dépassement.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '26-08-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Correction rigoureuse. Variez les plateformes de quiz pour rencontrer de nouvelles formulations.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Revoir les thèmes liés au conducteur (comportement, alcool, fatigue, médicaments).',
+                '💡 Focus : Les conséquences des infractions.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '27-08-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Correction détaillée, identification des dernières faiblesses persistantes. Mettez à jour votre carnet d\'erreurs.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relecture des chapitres liés aux erreurs récentes. Focus sur les thèmes "Environnement" et "Premiers Secours".',
+                '💡 Conseil : Repassez des vidéos explicatives si certains points ne sont toujours pas clairs.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '28-08-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Vérifiez votre temps de réponse par question. Visez moins de 20 secondes par question.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Concentrez-vous sur les thèmes où vous faites encore des hésitations. Par exemple : "Documents du véhicule" et "Équipements obligatoires".',
+                '💡 Astuce : Testez-vous sur les sigles (ABS, ESP, etc.) et leur signification.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '29-08-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Faites un bilan global de vos erreurs sur la semaine. Y a-t-il des progrès ?',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision des thèmes "Manœuvres" et "Mécanique". Revoir les vérifications à faire avant de prendre la route.',
+                '💡 Astuce : Repassez en revue les questions sur les feux et l\'éclairage du véhicule.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '30-08-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen (40 questions chacune).',
+                '🧐 Analyse : Focus sur les questions en image et vidéo, comprendre la situation visuelle.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Détente (14h00-17h00) : Pause l\'après-midi, faites une activité que vous aimez pour décompresser. Laissez les informations se digérer.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '31-08-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Révision (9h00-12h00) : Réviser tous les panneaux de signalisation rapidement pour vous rafraîchir la mémoire. Revoir les règles de priorité (carrefours, ronds-points).',
+                '💡 Pratique : Faire une série de 20 questions aléatoires sur tous les thèmes.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Détente (14h00-17h00) : Poursuivez la détente. Une petite marche ou une activité douce pour rester active sans stress.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '01-09-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen. Concentrez-vous sur la précision plutôt que la vitesse.',
+                '🧐 Analyse : Correction détaillée, identification des dernières faiblesses. Notez les questions que vous avez "devinées" et revoyez la règle.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relecture des chapitres liés aux erreurs. Refaire les quiz thématiques sur ces points spécifiques.',
+                '💡 Conseil : Écoutez des podcasts ou des résumés audio sur le code pour varier les supports.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '02-09-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen. Simulez les conditions réelles (pas de pause, temps limité).',
+                '🧐 Analyse : Repérez les pièges classiques (double négation, mots comme "toujours", "jamais", "uniquement").',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision des thèmes liés aux distances (sécurité, arrêt, freinage) et aux limitations de vitesse.',
+                '💡 Astuce : Créez des acronymes ou des petites phrases pour mémoriser les listes (ex: équipements obligatoires).',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '03-09-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen. Maintenez un rythme soutenu.',
+                '🧐 Analyse : Vérifiez votre taux de réussite sur les thèmes "Les autres usagers" et "Environnement".',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relisez les fiches sur les situations d\'urgence et les comportements à adopter (panne, accident, premiers secours).',
+                '💡 Conseil : Faites des flashcards pour les notions clés que vous avez du mal à retenir.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '04-09-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen. Repérez les questions visuelles ou vidéo qui vous posent problème.',
+                '🧐 Analyse : Notez les thèmes qui reviennent le plus souvent dans vos erreurs. Concentrez-vous dessus.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Approfondissez les règles de signalisation verticale et horizontale (marquages au sol).',
+                '💡 Astuce : Repassez en revue les questions sur les feux et l\'éclairage du véhicule.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '05-09-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 3 séries complètes d\'examen. Faites-en une "à blanc" sans aucune aide ni relecture.',
+                '🧐 Analyse : Évaluez votre performance globale. C\'est le moment de voir ce qui est acquis.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relisez votre carnet d\'erreurs complet. Repassez sur toutes les questions qui vous ont posé problème depuis le début.',
+                '💡 Conseil : Identifiez les 2-3 notions les plus difficiles pour vous et concentrez-vous dessus.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '06-09-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries d\'entraînement (moins de pression, pour maintenir le rythme).',
+                '🧐 Analyse : Repérez les thèmes où vous hésitez encore et relisez les fiches de cours correspondantes.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Détente (14h00-17h00) : L\'après-midi est dédiée à la détente active. Faites une activité relaxante, mais qui ne vous épuise pas (balade, lecture légère, film).',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '07-09-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Révision (9h00-12h00) : Relecture de votre carnet d\'erreurs complet. Repassez sur les notions les plus difficiles ou les plus oubliées.',
+                '💡 Conseil : Regardez des vidéos explicatives sur des points qui restent flous. Ne faites pas de nouvelles séries pour l\'instant.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Détente (14h00-17h00) : Poursuivez la détente. Une petite marche ou une activité douce pour rester active sans stress.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '08-09-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. Visez la perfection sur les thèmes que vous maîtrisez bien.',
+                '🧐 Analyse : Correction détaillée, renforcement des acquis. Réviser les règles de distance (sécurité, arrêt, freinage).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision des thèmes liés au conducteur (alcool, fatigue, téléphone) en vous concentrant sur les cas spécifiques et les exceptions.',
+                '💡 Conseil : Repassez sur les statistiques clés liées aux accidents (causes principales, catégories les plus touchées).',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '09-09-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. Notez les questions que vous trouvez ambigües, même si vous avez la bonne réponse.',
+                '🧐 Analyse : Correction détaillée. Réviser les thèmes liés à l\'environnement (éco-conduite, pollution) et aux premiers secours (actions, numéros).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Approfondissez les cas complexes de signalisation (panneaux spécifiques, marquages au sol non courants).',
+                '💡 Astuce : Testez-vous sur la signification des différentes couleurs de signalisation (par exemple, balises jaunes).',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '💪 Sport (18h30-19h30) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '10-09-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. Concentrez-vous sur les questions visuelles et vidéo.',
+                '🧐 Analyse : Correction détaillée. Réviser les thèmes liés aux documents et équipements du véhicule (validité, obligations).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision des thèmes liés aux manœuvres (créneau, demi-tour) et à la mécanique de base (vérifications des niveaux, voyants).',
+                '💡 Astuce : Revoyez la différence entre un arrêt et un stationnement.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '11-09-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. Identifiez les types de questions qui vous posent le plus de problèmes (photo, vidéo, texte pur).',
+                '🧐 Analyse : Correction détaillée. Reprenez votre carnet d\'erreurs depuis le début et refaites toutes les questions que you have noted.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision générale des règles de circulation complexes (ex: intersections sans signalisation, sens giratoire).',
+                '💡 Conseil : Concentrez-vous sur les exceptions aux règles générales. Elles sont souvent source d\'erreurs.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '12-09-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. L\'objectif est de faire moins de 5 erreurs par série.',
+                '🧐 Analyse : Vérifiez votre temps de réponse global. Essayez d\'être efficace sans précipitation.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Révision finale des panneaux les plus complexes et des situations de priorité les plus délicates.',
+                '💡 Conseil : Relisez les points clés de chaque thème sans entrer dans les détails, juste pour vous rassurer.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '13-09-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-11h00) : 1 série complète pour vous tester une dernière fois sous conditions.',
+                '🧘‍♀️ Détente (11h00-18h00) : Après la série, DÉTENTE ABSOLUE ! Allez prendre l\'air, faites une activité que vous aimez, voyez des amis (sans excès). Laissez votre cerveau se reposer.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30 (Important pour la qualité du sommeil)'
+            ]},
+            { date: '14-09-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 7h00 (Un peu plus tard)',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h30 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Repos Actif (9h00-12h00) : PAS de révision intensive. Vous pouvez relire quelques fiches que vous avez faites, ou revoir des points très précis qui vous tracassent. Le but est de rester calme.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Repos Actif (14h00-17h00) : Continuez à vous détendre. Visualisation positive : imaginez-vous réussir l\'examen !',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '15-09-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Révision légère (9h00-11h00) : Relire votre carnet d\'erreurs (les dernières fautes).',
+                '📝 Préparation : Vérifier la convocation à l\'examen, votre pièce d\'identité. Préparer vos affaires pour la semaine de l\'examen.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Après-midi calme (14h00-17h00) : Pas de révision intense. Activité légère, marcher un peu.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30 (Priorisez une très bonne nuit de sommeil)'
+            ]},
+            { date: '16-09-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Révision MINIMALE (9h00-10h00) : Relire TRÈS rapidement les points clés (signalisation routière, quelques chiffres importants). NE PAS FAIRE de nouvelles séries.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré, similaire aux jours précédents. Évitez les sucres rapides.',
+                '🧘‍♀️ Après-midi PRÉ-EXAMEN : Pas de stress. Détente maximale. Écoutez de la musique relaxante, lisez un livre sans lien avec le code.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '💪 Sport (18h30-19h30) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h00 (Couchez-vous un peu plus tôt pour maximiser le repos.)'
+            ]},
+            { date: '17-09-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Révision MINIMALE (9h00-10h00) : Relire TRÈS rapidement les points clés (signalisation routière, quelques chiffres importants). NE PAS FAIRE de nouvelles séries.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré, similaire aux jours précédents. Évitez les sucres rapides.',
+                '🧘‍♀️ Après-midi PRÉ-EXAMEN : Pas de stress. Détente maximale. Écoutez de la musique relaxante, lisez un livre sans lien avec le code.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h00 (Couchez-vous un peu plus tôt pour maximiser le repos.)'
+            ]},
+            { date: '18-09-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Journée CALME : Pas de révision ! Concentrez-vous sur votre bien-être. Faites une activité relaxante, regardez un film, passez du temps avec vos proches.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas léger mais nourrissant pour bien dormir.',
+                '😴 Dodo : 21h30 (Couchez-vous tôt. L\'objectif est d\'être au top de votre forme pour l\'examen.)'
+            ]},
+            { date: '19-09-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Journée CALME : Pas de révision ! Concentrez-vous sur votre bien-être. Faites une activité relaxante, regardez un film, passez du temps avec vos proches.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : Repas léger mais nourrissant pour bien dormir.',
+                '😴 Dodo : 21h30 (Couchez-vous tôt. L\'objectif est d\'être au top de votre forme pour l\'examen.)'
+            ]},
+            { date: '20-09-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Journée CALME : Pas de révision ! Concentrez-vous sur votre bien-être. Faites une activité relaxante, regardez un film, passez du temps avec vos proches.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas léger mais nourrissant pour bien dormir.',
+                '😴 Dodo : 21h30 (Couchez-vous tôt. L\'objectif est d\'être au top de votre forme pour l\'examen !)'
+            ]},
+            { date: '21-09-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Journée CALME : Pas de révision ! Concentrez-vous sur votre bien-être. Faites une activité relaxante, regardez un film, passez du temps avec vos proches.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas léger mais nourrissant pour bien dormir.',
+                '😴 Dodo : 21h30 (Couchez-vous tôt. L\'objectif est d\'être au top de votre forme pour l\'examen !)'
+            ]},
+            { date: '22-09-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🚗 Préparation Conduite (9h00-11h00) : Revoir les commandes du véhicule (volant, pédales, levier de vitesse). Visualiser les bases (démarrage, arrêt, braquage).',
+                '💡 Ressource : Regarder des vidéos YouTube sur les premières heures de conduite.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Révision Conduite (14h00-16h00) : Réviser les règles de circulation les plus importantes pour la pratique : priorités, ronds-points, signalisation lumineuse et horizontale.',
+                '💡 Astuce : Penser aux situations réelles que vous avez vues en tant que passager.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '23-09-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🚗 Pratique Mentale (9h00-11h00) : Imaginer un trajet simple, en détaillant les actions (démarrer, changer de vitesse, tourner, s\'arrêter).',
+                '📚 Révision Théorique (14h00-16h00) : Revoir les règles de dépassement et de stationnement en détail, car elles sont cruciales en pratique.',
+                '💡 Ressource : Relire les sections de votre manuel sur ces thèmes spécifiques.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '💪 Sport (18h30-19h30) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '24-09-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Approfondissement (9h00-11h00) : Les spécificités des autres usagers (piétons, cyclistes, deux-roues) du point de vue du conducteur.',
+                '💡 Conseil : Pensez aux dangers et aux zones à risque (angles morts, distances de sécurité avec les vélos).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Aspects Légaux (14h00-16h00) : Revoir les documents du véhicule et du conducteur (assurance, carte grise, permis à points).',
+                '💡 Astuce : Comprendre l\'importance de chaque document et leurs durées de validité.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '25-09-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Sécurité & Environnement (9h00-11h00) : Revoir les règles d\'éco-conduite et de conduite par conditions météo difficiles.',
+                '💡 Conseil : Comment réagir en cas de panne ou d\'accident (rappels des premiers secours).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🚗 Planification Leçons (14h00-16h00) : Si vous n\'avez pas encore vos leçons de conduite, commencez à planifier avec votre auto-école.',
+                '💡 Préparation : Réfléchir aux questions que vous pourriez poser à votre moniteur lors du premier cours.',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '26-09-2025', day: 'Vendredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Bilan Semaine (9h00-11h00) : Faire un petit bilan de votre première semaine post-code. Quels sont les points où vous vous sentez le plus à l\'aise ? Lesquels demandent encore de l\'attention ?',
+                '💡 Réflexion : Comment la théorie du code se traduit-elle dans la conduite réelle ?',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Temps Libre (14h00-17h00) : Profitez de votre après-midi. Vous avez bien mérité cette pause !',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '27-09-2025', day: 'Samedi', tasks: [
+                '⏰ Réveil : 8h00',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (8h30 - 300 kcal) : Prenez le temps pour un bon petit-déjeuner.',
+                '🧘‍♀️ Journée : Week-end ! Profitez de vos activités préférées. Reposez-vous mentalement.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas équilibré et savoureux.',
+                '🍽️ Collation (17h00 - 100 kcal) : Un encas léger.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas équilibré.',
+                '😴 Dodo : Selon vos envies.'
+            ]},
+            { date: '28-09-2025', day: 'Dimanche', tasks: [
+                '⏰ Réveil : 8h00',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (8h30 - 300 kcal) : Prenez le temps pour un bon petit-déjeuner.',
+                '🧘‍♀️ Journée : Dernier jour du planning. Détendez-vous et préparez-vous pour la semaine de conduite à venir !',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas équilibré et savoureux.',
+                '🍽️ Collation (17h00 - 100 kcal) : Un encas léger.',
+                '🏃‍♀️ Sport (18h00-18h45) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas équilibré.',
+                '😴 Dodo : Selon vos envies.'
+            ]},
+            { date: '29-09-2025', day: 'Lundi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 2 séries complètes d\'examen. Concentrez-vous sur la précision.',
+                '🧐 Analyse : Correction détaillée. Notez les questions que vous trouvez encore difficiles.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '📚 Étude (14h00-16h00) : Relecture de votre carnet d\'erreurs, focus sur les thèmes les plus faibles.',
+                '💡 Conseil : Révisez les règles qui sont le plus souvent posées à l\'examen (priorités, signalisation, distances).',
+                '🍽️ Collation (17h00 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '💪 Sport (18h00-19h00) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h30 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h30'
+            ]},
+            { date: '30-09-2025', day: 'Mardi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '📚 Pratique (9h00-12h00) : 1 série complète d\'examen pour vous tester une dernière fois sous conditions réelles (sans pause).',
+                '🧐 Analyse : Correction approfondie de cette dernière série. Concentrez-vous sur la compréhension des erreurs plutôt que sur la quantité.',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Grande salade composée (laitue, concombre, tomates cerises) avec 100g poulet grillé ou poisson blanc, 50g quinoa cuit, vinaigrette légère (1 cc huile d\'olive).',
+                '🧘‍♀️ Après-midi calme (14h00-17h00) : Détente absolue ! Pas de révision, juste des activités relaxantes pour vider l\'esprit.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '💪 Sport (18h30-19h30) : Séance avec Coach à On Air Clichy.',
+                '🍽️ Dîner (19h45 - 400 kcal) : 150g légumes verts cuits, 100g poulet vapeur ou grillé, 50g lentilles cuites ou 100g patate douce.',
+                '😴 Dodo : 22h00 (Priorisez une excellente nuit de sommeil. L\'examen est proche !)'
+            ]},
+            { date: '01-10-2025', day: 'Mercredi', tasks: [
+                '⏰ Réveil : 6h30',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h00 - 300 kcal) : 30g flocons d\'avoine avec eau/lait végétal, 50g baies, 10g amandes. Café/Thé sans sucre.',
+                '🧘‍♀️ Journée PRÉ-EXAMEN : Pas de révision ! Concentrez-vous sur votre bien-être. Faites une activité relaxante, regardez un film, passez du temps avec vos proches.',
+                '📝 Préparation : Vérifier une dernière fois votre convocation et votre pièce d\'identité. Préparer vos affaires pour demain (carte d\'identité).',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas sain et équilibré.',
+                '🍽️ Collation (16h30 - 100 kcal) : 1 fruit (pomme/orange) ou 1 petit yaourt nature 0%.',
+                '🤸‍♀️ Kiné (17h00-18h00) : Séance de kiné.',
+                '🏃‍♀️ Sport (18h30-19h15) : Course sur tapis (maison).',
+                '🍽️ Dîner (19h45 - 400 kcal) : Repas léger mais nourrissant pour bien dormir.',
+                '😴 Dodo : 21h30 (Couchez-vous très tôt pour maximiser le repos. Demain, c\'est le grand jour !)'
+            ]},
+            { date: '02-10-2025', day: 'Jeudi', tasks: [
+                '⏰ Réveil : 7h00 (Assurez-vous d\'avoir au moins 7-8h de sommeil complet)',
+                '💧 Hydratation : Grand verre d\'eau.',
+                '🍽️ Petit-déjeuner (7h30 - 300 kcal) : Repas équilibré et léger pour l\'énergie (avoine, fruits, amandes).',
+                '🚗 Départ pour l\'examen (8h45) : Prévoyez large pour le trajet, arrivez en avance au centre.',
+                '🎉 EXAMEN DU CODE DE LA ROUTE (10h00) au CENTRE OBJECTIFCODE MARTRE, 112 RUE MARTRE, 92110 CLICHY ! Soyez confiante et sereine ! Vous avez travaillé dur pour ça !',
+                '🍽️ Déjeuner (12h30 - 400 kcal) : Repas de célébration ou votre plat préféré, peu importe le résultat !',
+                '🧘‍♀️ Après-midi : REPOS ET DÉTENTE ABSOLUS ! Célébrez votre travail, décompressez. Aucune révision, aucun sport !',
+                '🍽️ Collation (17h00 - 100 kcal) : Un encas plaisir.',
+                '🍽️ Dîner (19h30 - 400 kcal) : Repas libre.',
+                '😴 Dodo : Selon vos envies, célébrez si besoin !'
+            ]}
+        ];
+
+        const dailyPlanningContainer = document.getElementById('daily-planning');
+        const toggleAllAccordionsButton = document.getElementById('toggleAllAccordions');
+        let allAccordionsOpen = false;
+
+        function generatePlanning() {
+            dailyPlanningContainer.innerHTML = '';
+            dailyPlanningData.forEach((dayData, index) => {
+                const dayId = `day-${dayData.date.replace(/-/g, '')}`;
+                const detailsElement = document.createElement('details');
+                detailsElement.id = dayId;
+                detailsElement.className = 'bg-gray-50 p-4 rounded-lg shadow-sm mb-4';
+                
+                const summaryElement = document.createElement('summary');
+                summaryElement.className = 'text-xl font-bold text-[#118AB2] cursor-pointer';
+                summaryElement.textContent = `${dayData.day} ${dayData.date}`;
+                detailsElement.appendChild(summaryElement);
+
+                const ulElement = document.createElement('ul');
+                ulElement.className = 'space-y-2 mt-2';
+                dayData.tasks.forEach((task, taskIndex) => {
+                    const liElement = document.createElement('li');
+                    liElement.innerHTML = `
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="task-${dayId}-${taskIndex}" class="form-checkbox h-5 w-5 text-[#06D6A0] rounded focus:ring-[#06D6A0]" data-date="${dayData.date}" data-task-index="${taskIndex}">
+                            <span class="ml-2 text-gray-700">${task}</span>
+                        </label>
+                    `;
+                    ulElement.appendChild(liElement);
+                });
+                detailsElement.appendChild(ulElement);
+                dailyPlanningContainer.appendChild(detailsElement);
+            });
+
+            loadProgress();
+            attachCheckboxListeners();
+            attachAccordionListeners();
+        }
+
+        function saveProgress() {
+            const progress = {};
+            document.querySelectorAll('#daily-planning input[type="checkbox"]').forEach(checkbox => {
+                progress[checkbox.id] = checkbox.checked;
+            });
+            localStorage.setItem('codeRouteProgress', JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('codeRouteProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                for (const id in progress) {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = progress[id];
+                    }
+                }
+            }
+        }
+
+        function attachCheckboxListeners() {
+            document.querySelectorAll('#daily-planning input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', saveProgress);
+            });
+        }
+
+        function attachAccordionListeners() {
+            toggleAllAccordionsButton.addEventListener('click', () => {
+                const allDetails = document.querySelectorAll('#daily-planning details');
+                allAccordionsOpen = !allAccordionsOpen;
+                allDetails.forEach(detail => {
+                    detail.open = allAccordionsOpen;
+                });
+                toggleAllAccordionsButton.textContent = allAccordionsOpen ? 'Tout replier' : 'Tout déplier';
+            });
+        }
+
+        // Tab Switching Logic
+        const infographicTab = document.getElementById('infographicTab');
+        const quizTab = document.getElementById('quizTab');
+        const infographicContent = document.getElementById('infographicContent');
+        const quizContent = document.getElementById('quizContent');
+
+        infographicTab.addEventListener('click', () => {
+            infographicContent.classList.add('active');
+            infographicContent.classList.remove('hidden-section');
+            quizContent.classList.remove('active');
+            quizContent.classList.add('hidden-section');
+            infographicTab.classList.add('active');
+            quizTab.classList.remove('active');
+        });
+
+        quizTab.addEventListener('click', () => {
+            quizContent.classList.add('active');
+            quizContent.classList.remove('hidden-section');
+            infographicContent.classList.remove('active');
+            infographicContent.classList.add('hidden-section');
+            quizTab.classList.add('active');
+            infographicTab.classList.remove('active');
+            loadQuestion(); // Load the first quiz question when switching to quiz tab
+        });
+
+        // Quiz Logic
+        const quizQuestions = [
+            {
+                question: "Que signifie ce panneau : un triangle rouge bordé de rouge avec une silhouette d'enfant ?",
+                options: ["Passage d'enfants", "École à proximité", "Zone de jeux", "Attention aux piétons"],
+                answer: "Passage d'enfants"
+            },
+            {
+                question: "Quelle est la distance de sécurité minimale à respecter sur autoroute par temps sec à 130 km/h ?",
+                options: ["50 mètres", "80 mètres", "100 mètres", "120 mètres"],
+                answer: "80 mètres"
+            },
+            {
+                question: "Je suis au volant et je ressens de la fatigue. Que dois-je faire ?",
+                options: ["Continuer à rouler en ouvrant la fenêtre", "Boire un café et continuer", "M'arrêter dès que possible pour faire une pause", "Mettre la radio plus fort"],
+                answer: "M'arrêter dès que possible pour faire une pause"
+            },
+            {
+                question: "Un feu tricolore passe à l'orange fixe. Que dois-je faire ?",
+                options: ["Accélérer pour passer avant le rouge", "M'arrêter si les conditions de sécurité le permettent", "Continuer si aucun véhicule n'arrive en face", "Ralentir et passer doucement"],
+                answer: "M'arrêter si les conditions de sécurité le permettent"
+            },
+            {
+                question: "Quel document n'est pas obligatoire à bord du véhicule ?",
+                options: ["Permis de conduire", "Carte grise", "Attestation d'assurance", "Carnet d'entretien du véhicule"],
+                answer: "Carnet d'entretien du véhicule"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        const questionContainer = document.getElementById('question-container');
+        const optionsContainer = document.getElementById('options-container');
+        const submitButton = document.getElementById('submit-answer');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-question');
+        const resultsElement = document.getElementById('quiz-results');
+
+        function loadQuestion() {
+            if (currentQuestionIndex < quizQuestions.length) {
+                const q = quizQuestions[currentQuestionIndex];
+                questionContainer.textContent = `Question ${currentQuestionIndex + 1} : ${q.question}`;
+                optionsContainer.innerHTML = '';
+                q.options.forEach((option, index) => {
+                    const radioId = `option-${index}`;
+                    optionsContainer.innerHTML += `
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="radio" name="quiz-option" id="${radioId}" value="${option}" class="form-radio h-4 w-4 text-[#118AB2] focus:ring-[#118AB2]">
+                            <span class="ml-2 text-gray-700">${option}</span>
+                        </label>
+                    `;
+                });
+
+                submitButton.style.display = 'inline-block';
+                nextButton.style.display = 'none';
+                feedbackElement.textContent = '';
+                resultsElement.style.display = 'none';
+                selectedOption = null;
+
+                document.querySelectorAll('input[name="quiz-option"]').forEach(radio => {
+                    radio.addEventListener('change', (event) => {
+                        selectedOption = event.target.value;
+                    });
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        function checkAnswer() {
+            if (selectedOption === null) {
+                feedbackElement.textContent = 'Veuillez sélectionner une option.';
+                feedbackElement.style.color = PALETTE.red;
+                return;
+            }
+
+            const q = quizQuestions[currentQuestionIndex];
+            if (selectedOption === q.answer) {
+                feedbackElement.textContent = 'Correct ! ✅';
+                feedbackElement.style.color = PALETTE.green;
+                score++;
+            } else {
+                feedbackElement.textContent = `Faux. La bonne réponse était : ${q.answer} ❌`;
+                feedbackElement.style.color = PALETTE.red;
+            }
+
+            submitButton.style.display = 'none';
+            nextButton.style.display = 'inline-block';
+
+            document.querySelectorAll('input[name="quiz-option"]').forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        function showResults() {
+            questionContainer.style.display = 'none';
+            optionsContainer.style.display = 'none';
+            submitButton.style.display = 'none';
+            nextButton.style.display = 'none';
+            feedbackElement.style.display = 'none';
+
+            resultsElement.textContent = `Quiz terminé ! Votre score : ${score} / ${quizQuestions.length}`;
+            resultsElement.style.display = 'block';
+            resultsElement.style.color = PALETTE.navy;
+
+            const resetButton = document.createElement('button');
+            resetButton.textContent = 'Recommencer le quiz';
+            resetButton.className = 'px-6 py-3 bg-[#FFD166] text-[#073B4C] rounded-md hover:bg-[#e6c05c] transition-colors mt-4';
+            resetButton.addEventListener('click', resetQuiz);
+            resultsElement.appendChild(resetButton);
+        }
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedOption = null;
+            questionContainer.style.display = 'block';
+            optionsContainer.style.display = 'block';
+            feedbackElement.style.display = 'block';
+            loadQuestion();
+        }
+
+        submitButton.addEventListener('click', checkAnswer);
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        // Initialize planning and load/save progress
+        document.addEventListener('DOMContentLoaded', () => {
+            generatePlanning();
+            // Do not load quiz question on DOMContentLoaded, only when quiz tab is clicked
+        });
+
+    </script>
+</body>
+</html>
